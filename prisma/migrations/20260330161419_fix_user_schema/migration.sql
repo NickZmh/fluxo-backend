@@ -1,0 +1,6 @@
+
+
+-- 2. NOT NULL
+ALTER TABLE "User"
+ALTER COLUMN "firstName" SET NOT NULL,
+ALTER COLUMN "lastName" SET NOT NULL;
