@@ -6,7 +6,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import bcrypt from 'bcrypt';
-import { CreateUserDto } from '../users/dto/create-user.dto';
+import { LoginUserDto, RegisterUserDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +15,7 @@ export class AuthService {
     private readonly userService: UsersService,
   ) {}
 
-  async login(email: string, password: string) {
+  async login({ email, password }: LoginUserDto) {
     const user = await this.userService.findByEmail(email.toLowerCase());
 
     if (!user || !user.password) {
@@ -30,13 +30,13 @@ export class AuthService {
 
     return {
       access_token: await this.jwt.signAsync({
-        sub: user.id,
+        id: user.id,
         email: user.email,
       }),
     };
   }
 
-  async register({ email, password, firstName, lastName }: CreateUserDto) {
+  async register({ email, password, firstName, lastName }: RegisterUserDto) {
     const normalizedEmail = email.toLowerCase();
 
     const existingUser = await this.userService.findByEmail(normalizedEmail);
