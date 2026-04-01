@@ -13,21 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id         Int      @id @default(autoincrement())
-  email      String   @unique
-  
-  firstName  String
-  lastName   String
-  avatar     String?
-
-  role       UserRole   @default(user)
-  status     UserStatus @default(active)
-
-  createdAt  DateTime @default(now())
-  password   String
-}
-
 enum UserRole {
   admin
   user
@@ -37,3 +22,66 @@ enum UserStatus {
   active
   inactive
 }
+
+enum ClientStatus {
+  NEW
+  IN_PROGRESS
+  DONE
+}
+
+
+model User {
+  id         String     @id @default(uuid())
+  email      String   @unique
+  password   String
+  
+  firstName  String
+  lastName   String
+  avatar     String?
+
+  role       UserRole   @default(user)
+  status     UserStatus @default(active)
+
+  createdAt  DateTime @default(now())
+
+  clients   Client[]
+  products  Product[]
+}
+
+model Client {
+  id        String    @id @default(uuid())
+  name      String
+  surname   String
+  phone     String?
+  email     String?
+  notes     String?
+
+  status    ClientStatus @default(NEW)
+
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+
+  products  Product[]    @relation("ClientProducts")
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id        String    @id @default(uuid())
+  name      String
+  description String?
+  price     Float?
+  sku       String?   @unique
+
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+
+  clients   Client[]   @relation("ClientProducts")
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+
+
