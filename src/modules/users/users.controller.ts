@@ -11,8 +11,12 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserPrismaExceptionFilter } from './filters/user-prisma-exception.filter';
 import { AllowGuard } from '../../guards/alow.guards';
-import { ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
+@ApiTags('Users')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
 @UseFilters(UserPrismaExceptionFilter)
 @UseGuards(AllowGuard)
 @Controller('users')
