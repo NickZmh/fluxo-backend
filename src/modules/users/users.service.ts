@@ -8,16 +8,32 @@ type CreateUserData = {
   lastName: string;
 };
 
+const userPublicFields = {
+  id: true,
+  email: true,
+  firstName: true,
+  lastName: true,
+  avatar: true,
+  role: true,
+  status: true,
+  createdAt: true,
+};
+
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   findAll() {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({
+      select: userPublicFields,
+    });
   }
 
   async findById(id: string) {
-    const user = await this.prisma.user.findUnique({ where: { id } });
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: userPublicFields,
+    });
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
