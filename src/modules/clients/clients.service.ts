@@ -8,20 +8,38 @@ export class ClientsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: CreateClientDto) {
+    const { products, ...clientData } = data;
+
     return this.prisma.client.create({
-      data,
+      data: {
+        ...clientData,
+        products: products
+          ? {
+              connect: products.map(({ id }) => ({ id })),
+            }
+          : undefined,
+      },
+      include: {
+        products: { select: { id: true } },
+      },
     });
   }
 
   async findAll() {
     return this.prisma.client.findMany({
       orderBy: { createdAt: 'desc' },
+      include: {
+        products: { select: { id: true, name: true } },
+      },
     });
   }
 
   async findOne(id: string) {
     const client = await this.prisma.client.findUnique({
       where: { id },
+      include: {
+        products: { select: { id: true, name: true } },
+      },
     });
 
     if (!client) {
@@ -34,9 +52,21 @@ export class ClientsService {
   async update(id: string, dto: UpdateClientDto) {
     await this.findOne(id);
 
+    const { products, ...clientData } = dto;
+
     return this.prisma.client.update({
       where: { id },
-      data: dto,
+      data: {
+        ...clientData,
+        ...(products && {
+          products: {
+            set: products.map((p) => ({ id: p.id })),
+          },
+        }),
+      },
+      include: {
+        products: { select: { id: true } },
+      },
     });
   }
 

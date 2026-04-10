@@ -41,14 +41,14 @@ export class ProductsService {
   }
 
   async create(data: CreateProductDto) {
-    const { clientIds, ...productData } = data;
+    const { clients, ...productData } = data;
 
     return this.prisma.product.create({
       data: {
         ...productData,
-        clients: clientIds
+        clients: clients
           ? {
-              connect: clientIds.map((id) => ({ id })),
+              connect: clients.map(({ id }) => ({ id })),
             }
           : undefined,
       },
@@ -58,10 +58,19 @@ export class ProductsService {
     });
   }
 
-  update(id: string, data: UpdateProductDto) {
+  update(id: string, dto: UpdateProductDto) {
+    const { clients, ...productData } = dto;
+
     return this.prisma.product.update({
       where: { id },
-      data,
+      data: {
+        ...productData,
+        ...(clients && {
+          clients: {
+            set: clients.map((c) => ({ id: c.id })),
+          },
+        }),
+      },
       select: productPublicFields,
     });
   }
