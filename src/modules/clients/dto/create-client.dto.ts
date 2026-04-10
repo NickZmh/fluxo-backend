@@ -1,12 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ClientStatus } from '@prisma/client';
+import { ProductIdObject } from 'src/modules/products/dto/create-product.dto';
+
+export class ClientIdObject {
+  @ApiProperty({ example: 'client id' })
+  id!: string;
+}
 
 export class CreateClientDto {
   @ApiProperty({ example: 'John' })
-  name: string;
+  name!: string;
 
   @ApiProperty({ example: 'Doe' })
-  surname: string;
+  surname!: string;
 
   @ApiProperty({ example: '+48 123 456 789', required: false })
   phone?: string;
@@ -21,8 +27,15 @@ export class CreateClientDto {
     example: ClientStatus.NEW,
     enum: ClientStatus,
   })
-  status: ClientStatus;
+  status!: ClientStatus;
 
   @ApiProperty({ example: 'uuid-of-user' })
-  userId: string;
+  userId!: string;
+
+  @ApiProperty({
+    required: false,
+    description: 'Products assigned to this client',
+    example: [{ id: 'product id' }],
+  })
+  products?: ProductIdObject[];
 }

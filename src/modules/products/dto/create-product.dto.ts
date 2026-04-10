@@ -7,11 +7,17 @@ import {
   IsArray,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { ClientIdObject } from 'src/modules/clients/dto/create-client.dto';
+
+export class ProductIdObject {
+  @ApiProperty({ example: 'product id' })
+  id!: string;
+}
 
 export class CreateProductDto {
   @ApiProperty({ example: 'Laptop Lenovo X1' })
   @IsString()
-  name: string;
+  name!: string;
 
   @ApiProperty({ example: 'Business ultrabook', required: false })
   @IsOptional()
@@ -30,12 +36,11 @@ export class CreateProductDto {
   sku?: string;
 
   @ApiProperty({ example: 'a3c1b1f0-9d2e-4c3a-8e1f-123456789abc' })
-  @IsUUID()
-  userId: string;
+  userId!: string;
 
-  @ApiProperty({ type: [String], required: false })
+  @ApiProperty({ type: [ClientIdObject], required: false })
   @IsOptional()
   @IsArray()
   @IsUUID('all', { each: true })
-  clientIds?: string[];
+  clients?: ClientIdObject[];
 }
