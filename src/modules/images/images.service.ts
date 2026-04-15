@@ -26,10 +26,12 @@ export class ImagesService {
 
     const response = await this.lambda.send(command);
 
-    const result = JSON.parse(
-      new TextDecoder().decode(response.Payload),
-    ) as UploadUrlResponse;
+    const parsed = JSON.parse(new TextDecoder().decode(response.Payload)) as {
+      body: string;
+    };
 
-    return result;
+    const body = JSON.parse(parsed.body) as UploadUrlResponse;
+
+    return body;
   }
 }
