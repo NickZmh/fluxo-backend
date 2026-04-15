@@ -9,9 +9,10 @@ export class UploadUrlResponseDto {
   uploadUrl!: string;
 
   @ApiProperty({
-    example: 'image/png',
+    example:
+      'https://fluxo-app-image.s3.amazonaws.com/uploads/1776270020206.jpg',
     description:
-      'The MIME type of the file for which the upload URL was generated.',
+      'A public URL where the uploaded file will be accessible after the upload.',
   })
-  fileType!: string;
+  fileUrl!: string;
 }
