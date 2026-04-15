@@ -8,7 +8,13 @@ export interface UploadUrlResponse {
 
 @Injectable()
 export class ImagesService {
-  private lambda = new LambdaClient({ region: 'eu-central-1' });
+  private lambda = new LambdaClient({
+    region: 'eu-central-1',
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    },
+  });
 
   async getUploadUrl(fileType: string) {
     const payload = JSON.stringify({ fileType });
