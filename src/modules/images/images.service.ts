@@ -6,12 +6,6 @@ export interface UploadUrlResponse {
   fileUrl: string;
 }
 
-console.log('ENV CHECK', {
-  region: process.env.AWS_REGION,
-  key: process.env.AWS_ACCESS_KEY_ID,
-  secret: process.env.AWS_SECRET_ACCESS_KEY,
-});
-
 @Injectable()
 export class ImagesService {
   private lambda = new LambdaClient({
