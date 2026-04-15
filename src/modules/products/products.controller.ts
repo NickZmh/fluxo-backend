@@ -11,8 +11,14 @@ import {
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { ProductResponseDto } from './dto/get-product.dto';
 
 @ApiTags('Products')
 @ApiBearerAuth()
@@ -21,6 +27,7 @@ import { AuthGuard } from '@nestjs/passport';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @ApiOkResponse({ type: [ProductResponseDto] })
   @Get()
   findAll() {
     return this.productsService.findAll();
