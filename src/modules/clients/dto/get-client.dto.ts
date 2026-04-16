@@ -1,5 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ClientStatus } from '@prisma/client';
+import { mapClient } from '../mappers/client.mapper';
+
+export type ClientResponse = ReturnType<typeof mapClient>;
+
+export class CreatedByDto {
+  @ApiProperty({ example: 'John' })
+  firstName!: string;
+
+  @ApiProperty({ example: 'Doe' })
+  lastName!: string;
+}
 
 export class ClientProductResponseDto {
   @ApiProperty({ example: '31f7c665-70d5-4221-95aa-11d49cec3ea0' })
@@ -9,7 +20,7 @@ export class ClientProductResponseDto {
   name!: string;
 }
 
-export class ClientResponseDto {
+export class ClientResponseDto implements ClientResponse {
   @ApiProperty({ example: '6dbbc45e-3897-48ba-b209-5cfbfc5e7e5d' })
   id!: string;
 
@@ -31,8 +42,8 @@ export class ClientResponseDto {
   @ApiProperty({ example: 'IN_PROGRESS', enum: ClientStatus })
   status!: ClientStatus;
 
-  @ApiProperty({ example: '60cc1cf8-779b-4df2-92d5-c26a1545ee00' })
-  userId!: string;
+  @ApiProperty({ type: () => CreatedByDto })
+  createdBy!: CreatedByDto;
 
   @ApiProperty({
     type: [ClientProductResponseDto],

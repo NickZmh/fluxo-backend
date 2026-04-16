@@ -29,11 +29,8 @@ export class CreateClientDto {
   })
   status!: ClientStatus;
 
-  @ApiProperty({ example: 'uuid-of-user' })
-  userId!: string;
-
   @ApiProperty({
-    required: false,
+    required: true,
     description: 'Products assigned to this client',
     example: [{ id: 'product id' }],
   })

@@ -2,23 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-
-const productPublicFields = {
-  id: true,
-  name: true,
-  description: true,
-  price: true,
-  sku: true,
-  createdAt: true,
-  clients: {
-    select: {
-      id: true,
-      name: true,
-      surname: true,
-      status: true,
-    },
-  },
-} as const;
+import { productPublicFields } from './selects/product.selects';
 
 @Injectable()
 export class ProductsService {
