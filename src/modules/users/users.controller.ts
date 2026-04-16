@@ -11,8 +11,14 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserPrismaExceptionFilter } from './filters/user-prisma-exception.filter';
 import { AllowGuard } from '../../guards/alow.guards';
-import { ApiBearerAuth, ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiExcludeEndpoint,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { UserResponseDto } from './dto/get-user-dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -24,11 +30,13 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
+  @ApiOkResponse({ type: [UserResponseDto] })
   findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
+  @ApiOkResponse({ type: UserResponseDto })
   findOne(@Param('id') id: string) {
     return this.usersService.findById(id);
   }

@@ -39,6 +39,10 @@ model User {
   lastName   String
   avatar     String?
 
+  phone      String?     
+  location   String?  
+  birthDate  String?
+
   role       UserRole   @default(user)
   status     UserStatus @default(active)
 
@@ -73,6 +77,8 @@ model Product {
   description String?
   price     Float?
   sku       String?   @unique
+  
+  imageUrl     String? 
 
   userId    String
   user      User      @relation(fields: [userId], references: [id])

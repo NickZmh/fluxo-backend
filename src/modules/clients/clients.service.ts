@@ -2,51 +2,52 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { CreateClientDto } from './dto/create-client.dto';
+import { clientPublicSelect } from './selects/select.client';
+import { mapClient } from './mappers/client.mapper';
 
 @Injectable()
 export class ClientsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: CreateClientDto) {
-    const { products, ...clientData } = data;
-
-    return this.prisma.client.create({
-      data: {
-        ...clientData,
-        products: products
-          ? {
-              connect: products.map(({ id }) => ({ id })),
-            }
-          : undefined,
-      },
-      include: {
-        products: { select: { id: true } },
-      },
-    });
-  }
-
   async findAll() {
-    return this.prisma.client.findMany({
+    const cliens = await this.prisma.client.findMany({
       orderBy: { createdAt: 'desc' },
-      include: {
-        products: { select: { id: true, name: true } },
-      },
+      select: clientPublicSelect,
     });
+
+    return cliens.map(mapClient);
   }
 
   async findOne(id: string) {
     const client = await this.prisma.client.findUnique({
       where: { id },
-      include: {
-        products: { select: { id: true, name: true } },
-      },
+      select: clientPublicSelect,
     });
 
     if (!client) {
       throw new NotFoundException('Client not found');
     }
 
-    return client;
+    return mapClient(client);
+  }
+
+  async create(data: CreateClientDto, userId: string) {
+    const { products, ...clientData } = data;
+
+    const clients = await this.prisma.client.create({
+      data: {
+        ...clientData,
+        userId,
+        products: products
+          ? {
+              connect: products.map(({ id }) => ({ id })),
+            }
+          : undefined,
+      },
+      select: clientPublicSelect,
+    });
+
+    return mapClient(clients);
   }
 
   async update(id: string, dto: UpdateClientDto) {
@@ -54,7 +55,7 @@ export class ClientsService {
 
     const { products, ...clientData } = dto;
 
-    return this.prisma.client.update({
+    const client = await this.prisma.client.update({
       where: { id },
       data: {
         ...clientData,
@@ -64,17 +65,20 @@ export class ClientsService {
           },
         }),
       },
-      include: {
-        products: { select: { id: true } },
-      },
+      select: clientPublicSelect,
     });
+
+    return mapClient(client);
   }
 
   async remove(id: string) {
     await this.findOne(id);
 
-    return this.prisma.client.delete({
+    const client = await this.prisma.client.delete({
       where: { id },
+      select: clientPublicSelect,
     });
+
+    return mapClient(client);
   }
 }
