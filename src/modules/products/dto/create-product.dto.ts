@@ -35,12 +35,14 @@ export class CreateProductDto {
   @IsString()
   sku?: string;
 
-  @ApiProperty({ example: 'a3c1b1f0-9d2e-4c3a-8e1f-123456789abc' })
-  userId!: string;
+  @ApiProperty({ example: 'https://example.com/image.jpg', required: false })
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
 
   @ApiProperty({ type: [ClientIdObject], required: false })
   @IsOptional()
   @IsArray()
   @IsUUID('all', { each: true })
-  clients?: ClientIdObject[];
+  clients!: ClientIdObject[] | null;
 }

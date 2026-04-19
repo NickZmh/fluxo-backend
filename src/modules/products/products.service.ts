@@ -24,17 +24,18 @@ export class ProductsService {
     return product;
   }
 
-  async create(data: CreateProductDto) {
+  async create(data: CreateProductDto, userId: string) {
     const { clients, ...productData } = data;
 
     return this.prisma.product.create({
       data: {
         ...productData,
-        clients: clients
-          ? {
-              connect: clients.map(({ id }) => ({ id })),
-            }
-          : undefined,
+        user: { connect: { id: userId } },
+        ...(clients && {
+          clients: {
+            connect: clients.filter((c) => c?.id).map((c) => ({ id: c.id })),
+          },
+        }),
       },
       include: {
         clients: true,
