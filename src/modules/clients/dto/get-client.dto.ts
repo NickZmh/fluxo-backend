@@ -31,13 +31,13 @@ export class ClientResponseDto implements ClientResponse {
   surname!: string;
 
   @ApiProperty({ example: '+48 123 456 789', required: false })
-  phone?: string;
+  phone!: string | null;
 
   @ApiProperty({ example: 'john@example.com', required: false })
-  email?: string;
+  email!: string | null;
 
   @ApiProperty({ example: 'Some notes', required: false })
-  notes?: string;
+  notes!: string | null;
 
   @ApiProperty({ example: 'IN_PROGRESS', enum: ClientStatus })
   status!: ClientStatus;
