@@ -7,6 +7,7 @@ import {
   IsArray,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { ClientIdObject } from 'src/modules/clients/dto/create-client.dto';
 
 export class UpdateProductDto {
   @ApiProperty({ example: 'Laptop Lenovo X1' })
@@ -29,9 +30,14 @@ export class UpdateProductDto {
   @IsString()
   sku?: string;
 
-  @ApiProperty({ type: [String], required: false })
+  @ApiProperty({ example: 'https://example.com/image.jpg', required: false })
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
+
+  @ApiProperty({ type: [ClientIdObject], required: false })
   @IsOptional()
   @IsArray()
   @IsUUID('all', { each: true })
-  clients?: { id: string }[];
+  clients?: ClientIdObject[] | null;
 }

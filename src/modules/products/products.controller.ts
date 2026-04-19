@@ -7,6 +7,7 @@ import {
   Patch,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -19,6 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { ProductResponseDto } from './dto/get-product.dto';
+import type { Request } from 'express';
 
 @ApiTags('Products')
 @ApiBearerAuth()
@@ -39,8 +41,9 @@ export class ProductsController {
   }
 
   @Post()
-  create(@Body() dto: CreateProductDto) {
-    return this.productsService.create(dto);
+  @ApiBody({ type: CreateProductDto })
+  create(@Body() dto: CreateProductDto, @Req() req: Request) {
+    return this.productsService.create(dto, req.user.id);
   }
 
   @Patch(':id')
