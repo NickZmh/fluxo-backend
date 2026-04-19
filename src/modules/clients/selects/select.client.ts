@@ -3,6 +3,9 @@ export const clientPublicSelect = {
   name: true,
   surname: true,
   status: true,
+  phone: true,
+  email: true,
+  notes: true,
   createdAt: true,
 
   user: {
