@@ -11,6 +11,9 @@ export const mapClient = (c: ClientSelected) => ({
   surname: c.surname,
   status: c.status,
   createdAt: c.createdAt,
+  phone: c.phone,
+  email: c.email,
+  notes: c.notes,
 
   createdBy: c.user
     ? {
