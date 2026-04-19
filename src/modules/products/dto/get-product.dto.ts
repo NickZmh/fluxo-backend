@@ -31,6 +31,9 @@ export class ProductResponseDto {
   @ApiProperty({ example: 'MBP-16-2026', required: false })
   sku?: string;
 
+  @ApiProperty({ example: 'https://example.com/image.jpg', required: false })
+  imageUrl!: string;
+
   @ApiProperty({ example: '2026-04-02T12:27:29.788Z' })
   createdAt!: Date;
 
