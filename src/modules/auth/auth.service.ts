@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import bcrypt from 'bcrypt';
 import { LoginUserDto, RegisterUserDto } from './dto/auth.dto';
+import { Profile } from 'passport-google-oauth20';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +15,27 @@ export class AuthService {
     private readonly jwt: JwtService,
     private readonly userService: UsersService,
   ) {}
+
+  async validateGoogleUser(profile: Profile) {
+    const email = profile.emails?.[0]?.value;
+    const name = profile.name?.givenName ?? '';
+    const surname = profile.name?.familyName ?? '';
+
+    if (!email) {
+      throw new Error('Google profile does not contain an email');
+    }
+
+    return this.userService.findOrCreateGoogleUser(email, name, surname);
+  }
+
+  async loginWithGoogle(user: { id: string; email: string }) {
+    return {
+      access_token: await this.jwt.signAsync({
+        id: user.id,
+        email: user.email,
+      }),
+    };
+  }
 
   async login({ email, password }: LoginUserDto) {
     const user = await this.userService.findByEmail(email.toLowerCase());
