@@ -4,7 +4,7 @@ import { LoginUserDto, RegisterUserDto } from './dto/auth.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UsersService } from '../users/users.service';
 import { RequestUser } from './type/request-user.type';
-import { ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 
 export interface AuthenticatedRequest extends Request {
   user: RequestUser;
@@ -33,5 +33,27 @@ export class AuthController {
   @Post('register')
   register(@Body() body: RegisterUserDto) {
     return this.auth.register(body);
+  }
+
+  @ApiOperation({
+    summary: 'Redirects user to Google OAuth login page',
+    description:
+      'This endpoint cannot be tested via Swagger because it performs a browser redirect.',
+  })
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth() {
+    // NestJS автоматично редіректить на Google
+  }
+
+  @ApiOperation({
+    summary: 'Google OAuth callback endpoint',
+    description:
+      'This endpoint is called by Google after successful authentication. Not testable via Swagger.',
+  })
+  @Get('google/redirect')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(@Req() req: AuthenticatedRequest) {
+    return await this.auth.loginWithGoogle(req.user);
   }
 }

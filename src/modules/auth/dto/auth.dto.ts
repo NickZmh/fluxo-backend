@@ -5,12 +5,12 @@ import { IsEmail, IsString, MinLength } from 'class-validator';
 export class LoginUserDto {
   @ApiProperty({ example: 'test@test.com' })
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty({ example: '123456' })
   @IsString()
   @MinLength(6)
-  password: string;
+  password!: string;
 }
 
 export class RegisterUserDto extends CreateUserDto {}

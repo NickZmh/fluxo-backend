@@ -6,6 +6,7 @@ import { AuthController } from './auth.controller';
 import { createJwtConfig } from './jwt/jwt.config';
 import { JwtStrategy } from './jwt/jwt.strategy';
 import { UsersModule } from '../users/users.module';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { UsersModule } from '../users/users.module';
     }),
   ],
   controllers: [AuthController], // Handles incoming HTTP requests (e.g. POST /auth/login)
-  providers: [AuthService, JwtStrategy], // Contains business logic (login, token generation, etc.)
+  providers: [AuthService, JwtStrategy, GoogleStrategy], // Contains business logic (login, token generation, etc.)
 })
 export class AuthModule {}
 

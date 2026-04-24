@@ -50,4 +50,16 @@ export class UsersService {
       where: { email },
     });
   }
+
+  async findOrCreateGoogleUser(email: string, name: string, surname: string) {
+    let user = await this.prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      user = await this.prisma.user.create({
+        data: { email, firstName: name, lastName: surname },
+      });
+    }
+
+    return user;
+  }
 }
