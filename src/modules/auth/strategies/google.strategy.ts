@@ -4,29 +4,45 @@ import { Injectable } from '@nestjs/common';
 import {
   Profile,
   Strategy,
-  StrategyOptions,
+  StrategyOptionsWithRequest,
   VerifyCallback,
 } from 'passport-google-oauth20';
+import type { Request } from 'express';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(private authService: AuthService) {
-    const options: StrategyOptions = {
+    const options: StrategyOptionsWithRequest = {
       clientID: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       callbackURL: process.env.GOOGLE_CALLBACK_URL!,
+      passReqToCallback: true,
       scope: ['email', 'profile'],
     };
 
     super(options);
   }
 
+  authorizationParams(req: Request) {
+    const redirectTo = req.query.redirectTo as string | undefined;
+    return {
+      state: JSON.stringify({
+        redirectTo,
+      }),
+    };
+  }
+
   async validate(
+    req: Request,
     accessToken: string,
     refreshToken: string,
     profile: Profile,
     done: VerifyCallback,
   ) {
+    const rawState = req.query.state as string;
+    const state = JSON.parse(rawState) as { redirectTo?: string };
+    req.redirectTo = state.redirectTo;
+
     const user = await this.authService.validateGoogleUser(profile);
     done(null, user);
   }
