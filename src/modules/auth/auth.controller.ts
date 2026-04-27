@@ -73,6 +73,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
+      domain: 'next-crm-app-one.vercel.app',
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
 
