@@ -27,6 +27,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     const redirectTo =
       typeof req.query?.redirectTo === 'string' ? req.query.redirectTo : null;
 
+    console.log('AUTH PARAMS QUERY:', req.query);
+
     return {
       state: JSON.stringify({
         redirectTo,
