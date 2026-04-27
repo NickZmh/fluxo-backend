@@ -24,7 +24,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   }
 
   authorizationParams(req: Request) {
-    const redirectTo = req.query.redirectTo as string | undefined;
+    const redirectTo =
+      typeof req.query?.redirectTo === 'string' ? req.query.redirectTo : null;
+
     return {
       state: JSON.stringify({
         redirectTo,
@@ -39,9 +41,13 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     profile: Profile,
     done: VerifyCallback,
   ) {
-    const rawState = req.query.state as string;
-    const state = JSON.parse(rawState) as { redirectTo?: string };
-    req.redirectTo = state.redirectTo;
+    const rawState = req.query?.state as string | undefined;
+
+    const state = rawState
+      ? (JSON.parse(rawState) as { redirectTo?: string })
+      : { redirectTo: null };
+
+    req.redirectTo = state.redirectTo ?? null;
 
     const user = await this.authService.validateGoogleUser(profile);
     done(null, user);
