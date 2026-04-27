@@ -76,6 +76,6 @@ export class AuthController {
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
 
-    return res.redirect(`${req.redirectTo}/crm`);
+    return res.redirect(`${process.env.FRONTEND_URL}/crm`);
   }
 }
