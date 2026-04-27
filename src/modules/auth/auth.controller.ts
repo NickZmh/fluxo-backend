@@ -69,15 +69,8 @@ export class AuthController {
   ) {
     const { access_token } = await this.auth.loginWithGoogle(req.user);
 
-    res.cookie('access_token', access_token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-      domain: '.next-crm-app-one.vercel.app',
-      path: '/',
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-    });
-
-    return res.redirect(`${process.env.FRONTEND_URL}/crm`);
+    return res.redirect(
+      `${process.env.FRONTEND_URL}/auth-success#token=${access_token}`,
+    );
   }
 }
