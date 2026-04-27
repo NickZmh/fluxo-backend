@@ -1,14 +1,11 @@
-declare module 'express-serve-static-core' {
-  namespace Express {
-    interface User {
+import 'express';
+
+declare module 'express' {
+  interface Request {
+    redirectTo?: string;
+    user: {
       id: string;
       email: string;
-    }
-
-    interface Request {
-      user: User;
-    }
+    };
   }
 }
-
-export {};

@@ -1,13 +1,23 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto, RegisterUserDto } from './dto/auth.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UsersService } from '../users/users.service';
 import { RequestUser } from './type/request-user.type';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import type { Response } from 'express';
 
 export interface AuthenticatedRequest extends Request {
   user: RequestUser;
+  redirectTo?: string;
 }
 
 @Controller('auth')
@@ -53,7 +63,19 @@ export class AuthController {
   })
   @Get('google/redirect')
   @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req: AuthenticatedRequest) {
-    return await this.auth.loginWithGoogle(req.user);
+  async googleAuthRedirect(
+    @Req() req: AuthenticatedRequest,
+    @Res() res: Response,
+  ) {
+    const { access_token } = await this.auth.loginWithGoogle(req.user);
+
+    res.cookie('access_token', access_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
+
+    return res.redirect(`${req.redirectTo}/crm`);
   }
 }
