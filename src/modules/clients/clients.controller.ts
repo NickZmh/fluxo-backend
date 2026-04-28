@@ -26,8 +26,14 @@ export class ClientsController {
 
   @Get()
   @ApiOkResponse({ type: [ClientResponseDto] })
-  findAll() {
-    return this.clientsService.findAll();
+  findAll(@Req() req: Request) {
+    return this.clientsService.findAll(req.user.id);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({ type: ClientResponseDto })
+  findOne(@Param('id') id: string, @Req() req: Request) {
+    return this.clientsService.findOne(id, req.user.id);
   }
 
   @Post()
@@ -36,21 +42,19 @@ export class ClientsController {
     return this.clientsService.create(dto, req.user.id);
   }
 
-  @Get(':id')
-  @ApiOkResponse({ type: ClientResponseDto })
-  findOne(@Param('id') id: string) {
-    return this.clientsService.findOne(id);
-  }
-
   @Patch(':id')
   @ApiOkResponse({ type: ClientResponseDto })
-  update(@Param('id') id: string, @Body() dto: UpdateClientDto) {
-    return this.clientsService.update(id, dto);
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateClientDto,
+    @Req() req: Request,
+  ) {
+    return this.clientsService.update(id, dto, req.user.id);
   }
 
   @Delete(':id')
   @ApiOkResponse({ description: 'Client deleted successfully' })
-  remove(@Param('id') id: string) {
-    return this.clientsService.remove(id);
+  remove(@Param('id') id: string, req: Request) {
+    return this.clientsService.remove(id, req.user.id);
   }
 }

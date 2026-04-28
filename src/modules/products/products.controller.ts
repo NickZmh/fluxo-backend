@@ -31,13 +31,13 @@ export class ProductsController {
 
   @ApiOkResponse({ type: [ProductResponseDto] })
   @Get()
-  findAll() {
-    return this.productsService.findAll();
+  findAll(@Req() req: Request) {
+    return this.productsService.findAll(req.user.id);
   }
 
   @Get(':id')
-  findById(@Param('id') id: string) {
-    return this.productsService.findById(id);
+  findById(@Param('id') id: string, @Req() req: Request) {
+    return this.productsService.findById(id, req.user.id);
   }
 
   @Post()
@@ -48,12 +48,16 @@ export class ProductsController {
 
   @Patch(':id')
   @ApiBody({ type: UpdateProductDto })
-  update(@Param('id') id: string, @Body() dto: UpdateProductDto) {
-    return this.productsService.update(id, dto);
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateProductDto,
+    @Req() req: Request,
+  ) {
+    return this.productsService.update(id, dto, req.user.id);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.productsService.delete(id);
+  delete(@Param('id') id: string, @Req() req: Request) {
+    return this.productsService.delete(id, req.user.id);
   }
 }
