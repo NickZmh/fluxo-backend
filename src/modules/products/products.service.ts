@@ -8,15 +8,17 @@ import { productPublicFields } from './selects/product.selects';
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
+  findAll(userId: string) {
     return this.prisma.product.findMany({
+      where: { userId },
       select: productPublicFields,
+      orderBy: { createdAt: 'desc' },
     });
   }
 
-  async findById(id: string) {
-    const product = await this.prisma.product.findUnique({
-      where: { id },
+  async findById(id: string, userId: string) {
+    const product = await this.prisma.product.findFirst({
+      where: { id, userId },
       select: productPublicFields,
     });
 
@@ -30,7 +32,7 @@ export class ProductsService {
     return this.prisma.product.create({
       data: {
         ...productData,
-        user: { connect: { id: userId } },
+        userId,
         ...(clients && {
           clients: {
             connect: clients.filter((c) => c?.id).map((c) => ({ id: c.id })),
@@ -43,7 +45,9 @@ export class ProductsService {
     });
   }
 
-  update(id: string, dto: UpdateProductDto) {
+  async update(id: string, dto: UpdateProductDto, userId: string) {
+    await this.findById(id, userId);
+
     const { clients, ...productData } = dto;
 
     return this.prisma.product.update({
@@ -60,7 +64,9 @@ export class ProductsService {
     });
   }
 
-  delete(id: string) {
+  async delete(id: string, userId: string) {
+    await this.findById(id, userId);
+
     return this.prisma.product.delete({
       where: { id },
       select: productPublicFields,

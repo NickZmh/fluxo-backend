@@ -9,8 +9,9 @@ import { mapClient } from './mappers/client.mapper';
 export class ClientsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll() {
+  async findAll(userId: string) {
     const cliens = await this.prisma.client.findMany({
+      where: { userId },
       orderBy: { createdAt: 'desc' },
       select: clientPublicSelect,
     });
@@ -18,9 +19,9 @@ export class ClientsService {
     return cliens.map(mapClient);
   }
 
-  async findOne(id: string) {
-    const client = await this.prisma.client.findUnique({
-      where: { id },
+  async findOne(id: string, userId: string) {
+    const client = await this.prisma.client.findFirst({
+      where: { id, userId },
       select: clientPublicSelect,
     });
 
@@ -50,8 +51,8 @@ export class ClientsService {
     return mapClient(clients);
   }
 
-  async update(id: string, dto: UpdateClientDto) {
-    await this.findOne(id);
+  async update(id: string, dto: UpdateClientDto, userId: string) {
+    await this.findOne(id, userId);
 
     const { products, ...clientData } = dto;
 
@@ -71,8 +72,8 @@ export class ClientsService {
     return mapClient(client);
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(id: string, userId: string) {
+    await this.findOne(id, userId);
 
     const client = await this.prisma.client.delete({
       where: { id },
